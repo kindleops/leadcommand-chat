@@ -30,7 +30,7 @@ const NUMBERS_TABLE_NAME = 'Numbers';
 
 // Airtable can’t call TextGrid direct, so we call YOUR proxy.
 // Change this to your Render URL:
-const SMS_PROXY_URL = 'https://rei-sms-engine.onrender.com/sms-proxy'; // <- change to your endpoint
+const SMS_PROXY_URL = 'https://leadcommand-chat.onrender.com'; // <- change to your endpoint
 
 // If your Conversations table uses different field names, change here:
 const CONVO_FIELDS = {
