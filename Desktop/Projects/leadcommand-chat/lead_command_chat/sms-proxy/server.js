@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// POST /sms-proxy
+// 🔥 SMS relay endpoint for Airtable
 app.post("/sms-proxy", async (req, res) => {
   const { to, from, body } = req.body;
   if (!to || !from || !body) {
@@ -14,13 +14,11 @@ app.post("/sms-proxy", async (req, res) => {
   }
 
   try {
-    // Use your TextGrid credentials
-    const auth = {
-      username: "bsmP3M1uzUswpnoGjA8Q2w",
-      password: "6e93bf3b99e24e1cb289ef0be56bf3e5",
-    };
+    // 🧩 Replace with your TextGrid credentials
+    const ACCOUNT_SID = process.env.ACCOUNT_SID;
+    const AUTH_TOKEN = process.env.AUTH_TOKEN;
 
-    const url = "https://api.textgrid.com/2010-04-01/Accounts/bsmP3M1uzUswpnoGjA8Q2w/Messages.json";
+    const url = `https://api.textgrid.com/2010-04-01/Accounts/${ACCOUNT_SID}/Messages.json`;
 
     const data = new URLSearchParams({
       From: `+${from.replace(/\D/g, "")}`,
@@ -29,16 +27,19 @@ app.post("/sms-proxy", async (req, res) => {
     });
 
     const response = await axios.post(url, data, {
-      auth,
+      auth: { username: ACCOUNT_SID, password: AUTH_TOKEN },
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
     });
 
-    res.json({ ok: true, messageSid: response.data.sid || null });
+    console.log("✅ Sent:", to, body);
+    res.json({ ok: true, data: response.data });
   } catch (err) {
-    console.error("SMS send failed:", err.message);
+    console.error("❌ Send error:", err.message);
     res.status(500).json({ error: err.message });
   }
 });
 
+app.get("/", (req, res) => res.send("✅ SMS Proxy running"));
+
 const PORT = process.env.PORT || 8080;
-app.listen(PORT, () => console.log(`🚀 SMS proxy running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server active on port ${PORT}`));
